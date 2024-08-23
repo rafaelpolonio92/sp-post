@@ -5,6 +5,8 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { PostEntity } from '../entities/post.entity';
 import { CommentEntity } from '../entities/comment.entity';
 import { Repository } from 'typeorm';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 describe('PostController', () => {
   let postController: PostController;
@@ -17,11 +19,19 @@ describe('PostController', () => {
         PostService,
         {
           provide: getRepositoryToken(PostEntity),
-          useClass: Repository, // Mock the PostEntity repository
+          useClass: Repository,
         },
         {
           provide: getRepositoryToken(CommentEntity),
-          useClass: Repository, // Mock the CommentEntity repository
+          useClass: Repository,
+        },
+        {
+          provide: CACHE_MANAGER, 
+          useValue: {
+            get: jest.fn(),
+            set: jest.fn(),
+            del: jest.fn(),
+          },
         },
       ],
     }).compile();
@@ -45,16 +55,16 @@ describe('PostController', () => {
       jest.spyOn(postService, 'addComment').mockResolvedValue(newComment);
 
       const result = await postController.addComment(1, {
-        body: 'Test comment',
-        name: 'Test Name',
-        email: 'test@example.com',
+        body: 'Test comment rafael',
+        name: 'Test rafael',
+        email: 'rafael@example.com',
       });
 
       expect(result).toBe(newComment);
       expect(postService.addComment).toHaveBeenCalledWith(1, {
-        body: 'Test comment',
-        name: 'Test Name',
-        email: 'test@example.com',
+        body: 'Test comment rafael',
+        name: 'Test rafael',
+        email: 'rafael@example.com',
       });
     });
   });
